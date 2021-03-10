@@ -1,0 +1,15 @@
+package com.blockbuster;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+@SpringBootApplication
+@EnableAspectJAutoProxy
+public class BlockbusterApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(BlockbusterApplication.class, args);
+	}
+
+}
