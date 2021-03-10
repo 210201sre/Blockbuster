@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-one
+  namespace: ernest-kim
+spec:
+  selector:
+    app: project-one
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8880
+    targetPort: 8880
+  type: ClusterIP
