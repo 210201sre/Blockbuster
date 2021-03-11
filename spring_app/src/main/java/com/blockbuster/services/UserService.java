@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.blockbuster.exceptions.PasswordMismatchException;
 import com.blockbuster.exceptions.UserNotFoundException;
 import com.blockbuster.models.Rental;
 import com.blockbuster.models.User;
@@ -123,12 +124,9 @@ public class UserService {
 			log.info("User successfully logged in");
 			MDC.clear();
 			return u;
-		} 
-		
-		MDC.put("wrongPassword", password);
-		log.error("Incorrect password");
-		MDC.clear();
-		return null;
+		} else {
+			throw new PasswordMismatchException();
+		}
 	}
 	
 	public void logout() {

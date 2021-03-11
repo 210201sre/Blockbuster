@@ -1,5 +1,7 @@
 package com.blockbuster.exceptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,10 +11,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.blockbuster.services.UserService;
+
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
-
 	
+	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest request){
@@ -32,12 +36,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
 	}
 	
-	@ExceptionHandler(EmailAlreadyExistsException.class)
-	public ResponseEntity<Object> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex, WebRequest request){
-		String bodyOfResponse = "Email trying to register with already exists";
-		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
-	}
-	
 	@ExceptionHandler(UsernameAlreadyExistException.class)
 	public ResponseEntity<Object> handleUsernameAlreadyExistsException(UsernameAlreadyExistException ex, WebRequest request){
 		String bodyOfResponse = "Username trying to register with already exists";
@@ -47,6 +45,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(PasswordMismatchException.class)
 	public ResponseEntity<Object> handlePasswordMismatchException(PasswordMismatchException ex, WebRequest request){
 		String bodyOfResponse = "The passwords did not match";
+		MDC.put("event", "badPassword");
+		log.error("Incorrect password");
+		MDC.clear();
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
 	}
 }
