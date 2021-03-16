@@ -114,7 +114,7 @@ public class UserServiceTests {
 	}
 	
 	@Test
-	public void testFindByIdDeleteById() {
+	public void testFindById() {
 		System.out.println("Testing findById()");																																																																					Optional<User> testUser = Optional.ofNullable(new User(1, "First", "password", LocalDate.of(1983, 1, 13), "123 Some St.", "City", STATES.MA, 12345, Collections.emptySet(), ROLE.CUSTOMER));
 		
 		when(userDAO.findById(1)).thenReturn(testUser);

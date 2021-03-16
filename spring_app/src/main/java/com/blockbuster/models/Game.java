@@ -81,10 +81,10 @@ public class Game {
 	@OneToOne(mappedBy = "game")
 	private Rental rental;
 	
-	public Game(int id) {
-		super();
-		this.id = id;
-	}
+//	public Game(int id) {
+//		super();
+//		this.id = id;
+//	}
 
 	public Game(int id, String name, GENRE genre, CONSOLES console, String publisher, String developer,
 			LocalDate yearReleased) {
