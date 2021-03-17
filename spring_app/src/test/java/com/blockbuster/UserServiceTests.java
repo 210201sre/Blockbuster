@@ -1,10 +1,13 @@
 package com.blockbuster;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,17 +17,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 import com.blockbuster.models.User;
 import com.blockbuster.exceptions.PasswordMismatchException;
@@ -33,27 +37,31 @@ import com.blockbuster.models.STATES;
 import com.blockbuster.repositories.UserDAO;
 import com.blockbuster.services.UserService;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UserServiceTests {
+@ExtendWith(MockitoExtension.class)
+class UserServiceTests {
 	
 	@InjectMocks
 	UserService userService;
 	
 	@Mock
 	UserDAO userDAO;
-	
+
 	@Mock
 	User u;
-	
+
 	@Mock
 	HttpServletRequest request;
-	
+
 	@Mock
 	HttpSession session;
 	
-	static Optional<User> testUser;
+	@Mock
+	Logger log;
 	
-	@BeforeClass
+	private static Optional<User> testUser;
+	private static int testId = 1;
+	
+	@BeforeAll
 	public static void setUpAll() {
 		testUser = Optional.ofNullable(
 				new User(1, "First", "password", LocalDate.of(1983, 1, 13), 
@@ -61,13 +69,13 @@ public class UserServiceTests {
 		);
 	}
 	
-	@AfterClass 
+	@AfterAll 
 	public static void tearDownAll() {
 		testUser = null;
 	}
 	
 	@Test
-	public void testFindAll() {
+	void testFindAll() {
 		System.out.println("Testing findAll()");
 		
 		List<User> result = new ArrayList<User>();
@@ -84,7 +92,7 @@ public class UserServiceTests {
 	}
 	
 	@Test
-	public void testInsert() {
+	void testInsert() {
 		System.out.println("Testing insert()");
 
 		when(userDAO.save(u)).thenReturn(u);
@@ -94,18 +102,28 @@ public class UserServiceTests {
 	}
 	
 	@Test
-	public void testGetRentals() {
+	void testGetRentals() {
 		System.out.println("Testing getRentals()");
 		
 		when(userDAO.findByUsername("First")).thenReturn(testUser);
 		
 		assertSame(testUser.get(), userService.findByUsername("First"));
 		assertEquals(0, userService.getRentals("First").size());
+		
 		verify(userDAO, times(2)).findByUsername("First");
 	}
 	
 	@Test
-	public void testFindByUsername() {
+	void testFailedGetRentals() {
+		System.out.println("Testing failed getRentals()");
+		
+		assertSame(Collections.emptySet(), userService.getRentals(u.getUsername()));
+		
+		verify(userDAO, times(1)).findByUsername(u.getUsername());
+	}
+	
+	@Test
+	void testFindByUsername() {
 		System.out.println("Testing findByUsername()");
 		
 		when(userDAO.findByUsername("First")).thenReturn(testUser);
@@ -114,31 +132,56 @@ public class UserServiceTests {
 	}
 	
 	@Test
-	public void testFindById() {
+	void testFailedFindByUsername() {
+		System.out.println("Testing failed findByUsername()");
+		
+		assertNull(userService.findByUsername(u.getUsername()));
+		verify(userDAO, times(1)).findByUsername(u.getUsername());
+	}
+	
+	@Test
+	void testFindById() {
 		System.out.println("Testing findById()");																																																																					Optional<User> testUser = Optional.ofNullable(new User(1, "First", "password", LocalDate.of(1983, 1, 13), "123 Some St.", "City", STATES.MA, 12345, Collections.emptySet(), ROLE.CUSTOMER));
 		
-		when(userDAO.findById(1)).thenReturn(testUser);
+		when(userDAO.findById(testId)).thenReturn(testUser);
 		
-		assertSame(testUser.get(), userService.findById(1));
-		verify(userDAO, times(1)).findById(1);
+		assertSame(testUser.get(), userService.findById(testId));
+		verify(userDAO, times(testId)).findById(1);
 	}
 	
 	@Test
-	public void testDeleteById() {
+	void testDeleteById() {
 		System.out.println("Testing deleteById()");
 		
-		when(userDAO.findById(1)).thenReturn(testUser);
-		doNothing().when(userDAO).deleteById(1);
+		when(userDAO.findById(testId)).thenReturn(testUser);
+		doNothing().when(userDAO).deleteById(testId);
 		
-		assertSame(testUser.get(), userService.findById(1));
-		assertTrue(userService.deleteById(1));
+		assertSame(testUser.get(), userService.findById(testId));
+		assertTrue(userService.deleteById(testId));
 		
-		verify(userDAO, times(2)).findById(1);
-		verify(userDAO, times(1)).deleteById(1);
+		verify(userDAO, times(2)).findById(testId);
+		verify(userDAO, times(1)).deleteById(testId);
 	}
 	
 	@Test
-	public void testLogin() {
+	void testFailedDeleteById1() {		
+		assertFalse(userService.deleteById(u.getId()));
+		
+		verify(userDAO, times(1)).findById(u.getId());
+	}
+	
+	@Test
+	void testFailedDeleteById2() {
+		when(userDAO.findById(testId)).thenReturn(testUser);
+		doThrow(IllegalArgumentException.class).when(userDAO).deleteById(testId);
+		
+		assertFalse(userService.deleteById(testId));
+		
+		verify(userDAO, times(1)).findById(testId);
+	}
+	
+	@Test
+	void testLogin() {
 		System.out.println("Testing login()");
 		
 		when(userDAO.findByUsername("First")).thenReturn(testUser);
@@ -150,19 +193,21 @@ public class UserServiceTests {
 		verify(request, times(1)).getSession();
 	}
 	
-	@Test(expected = PasswordMismatchException.class)
-	public void testFailedLogin() {
+	@Test
+	void testFailedLogin() {
 		System.out.println("Testing failed login()");
 		
 		when(userDAO.findByUsername("First")).thenReturn(testUser);
 		
-		userService.login("First", "fail");
+		Assertions.assertThrows(PasswordMismatchException.class, () -> {
+			userService.login("First", "fail");
+		});
 		
 		verify(userDAO, times(1)).findByUsername("First");
 	}
 	
 	@Test
-	public void testLogout() {
+	void testLogout() {
 		System.out.println("Testing logout()");
 		
 		when(request.getSession(false)).thenReturn(session);

@@ -3,17 +3,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.4.3</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
+	
 	<groupId>com.blockbuster</groupId>
 	<artifactId>Blockbuster</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Blockbuster</name>
 	<description>Team Blockbuster Project 2</description>
+	
 	<properties>
 		<java.version>1.8</java.version>
 
@@ -130,7 +133,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>		
 		<!--

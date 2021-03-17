@@ -15,14 +15,17 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Properties;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import javax.mail.Session;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.blockbuster.models.CONSOLES;
 import com.blockbuster.models.GENRE;
@@ -36,7 +39,7 @@ import com.blockbuster.repositories.RentalDAO;
 import com.blockbuster.repositories.UserDAO;
 import com.blockbuster.services.RentalService;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RentalServiceTests {
 	@InjectMocks
 	RentalService rentalService;
@@ -59,12 +62,15 @@ public class RentalServiceTests {
 	@Mock
 	Game g;
 	
+	@Mock
+	Rental r;
+	
 	private static final int testId = 1;
 	static Optional<Game> testGame;
 	static Optional<User> testUser;
 	static Optional<Rental> testRental;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUpAll() {
 		testGame = Optional.ofNullable(
 				new Game(1, "First", GENRE.ACTION_ADVENTURE, CONSOLES.SNES, "Publisher", "Developer", LocalDate.of(1983, 1, 13))
@@ -80,7 +86,7 @@ public class RentalServiceTests {
 		);
 	}
 	
-	@AfterClass 
+	@AfterAll
 	public static void tearDownAll() {
 		testGame = null;
 		testUser = null;
@@ -186,5 +192,23 @@ public class RentalServiceTests {
 		
 		verify(rentalDAO, times(1)).findById(testGame.get().getId());
 		verify(rentalDAO, times(1)).save(testRental.get());
+	}
+	
+	@Test
+	void testFailedSendEmail1() {
+		System.out.println("Testing first failed sendEmail()");
+		rentalService.sendEmail(testRental.get());
+		verify(userDAO, times(1)).findById(testRental.get().getUser().getId());
+	}
+	
+	@Test
+	void testFailedSendEmail2() {
+		System.out.println("Testing second failed sendEmail()");
+		
+		when(userDAO.findById(testRental.get().getUser().getId())).thenReturn(testUser);
+		
+		rentalService.sendEmail(testRental.get());
+		verify(userDAO, times(1)).findById(testRental.get().getUser().getId());
+		verify(gameDAO, times(1)).findById(testRental.get().getGame().getId());
 	}
 }

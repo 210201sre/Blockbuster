@@ -16,13 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.blockbuster.models.CONSOLES;
 import com.blockbuster.models.GENRE;
@@ -31,7 +31,7 @@ import com.blockbuster.models.Review;
 import com.blockbuster.repositories.ReviewDAO;
 import com.blockbuster.services.ReviewService;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ReviewServiceTests {
 	@InjectMocks
 	ReviewService reviewService;
@@ -49,7 +49,7 @@ public class ReviewServiceTests {
 	private static Optional<Review> testReview;
 	private static Game testGame;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUpAll() {
 		testGame = new Game(1, "First", GENRE.ACTION_ADVENTURE, CONSOLES.SNES, "Publisher", "Developer", LocalDate.of(1983, 1, 13));
 		testReview = Optional.ofNullable(
@@ -57,7 +57,7 @@ public class ReviewServiceTests {
 		);
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void tearDownAll() {
 		testReview = null;
 	}
