@@ -8,8 +8,8 @@ pipeline {
       apiVersion: v1
       kind: Pod
       metadata:
-      lables:
-      component: ci
+      labels:
+        component: ci
       spec:
         containers:
         - name: jnlp
@@ -20,7 +20,7 @@ pipeline {
             value: tcp://localhost:2375
           resources:
             requests:
-              memory: "500mi"
+              memory: "500Mi"
               cpu: "0.3"
             limits:
               memory: "800Mi"
@@ -40,7 +40,14 @@ pipeline {
             limits:
               memory: "500Mi"
               cpu: "0.5"
-            
+        - name: kubectl
+          image: jshimko/kube-tools-aws:latest
+          command:
+          - cat
+          tty: true
+        volumes:
+        - name: docker-storage
+          emptyDir: {}
       """
     }
   }
