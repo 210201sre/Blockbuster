@@ -89,5 +89,18 @@ pipeline {
         }
       }
     }
+
+    stage('kuberneties') {
+      steps{
+        script {
+          container('kubectl') {
+            withKubeConfig([credentialsId: 'kubeconfig']) {
+              sh "aws eks update-kubeconfig --name matt-oberlies-sre-943"
+              sh 'kubectl get pods'
+            }
+          }
+        }
+      }
+    }
   }
 }
