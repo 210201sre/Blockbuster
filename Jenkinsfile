@@ -13,7 +13,7 @@ pipeline {
       spec:
         containers:
         - name: jnlp
-          image: oddavid/jenkins-jnlp-slave:jdk11
+          image: odavid/jenkins-jnlp-slave:jdk11
           workingDir: /home/jenkins
           env:
           - name: DOCKER_HOST
