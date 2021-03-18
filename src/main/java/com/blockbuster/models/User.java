@@ -1,5 +1,6 @@
 package com.blockbuster.models;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -39,7 +40,10 @@ import lombok.ToString;
 @Table(name = "users", schema = "rentals_vg")
 @Data @NoArgsConstructor @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"rentals"}) @ToString(exclude = {"rentals"})
-public class User {
+public class User implements Serializable{
+
+	private static final long serialVersionUID = 8557962507138757867L;
+
 	@Id
 	@Column(nullable = false, unique = true, updatable = false)
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
