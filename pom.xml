@@ -40,8 +40,9 @@
 		<!-- The models package does not have any logic in it, it is designed just 
 			to store data -->
 		<!-- We don't have to unit test our models, because there is no logic -->
-		<sonar.exclusions>src/**/models/**/*, src/**/controllers/**/*,
-			src/**/repositories/**/*</sonar.exclusions>
+		<sonar.exclusions>src/**/advice/**/*, src/**/annotations/**/*,
+			src/**/controllers/**/*, src/**/exceptions/**/*,
+			src/**/models/**/*, src/**/repositories/**/*</sonar.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>
