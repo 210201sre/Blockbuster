@@ -71,6 +71,10 @@ pipeline {
     stage('Sonar Quality Check') {
       steps {
         sh 'java -version'
+        sh 'chmod +x mvnw'
+        withSonarQubeEnv(credentialsId: 'sonar-blockbuster-token', installationName: 'sonarcloud') {
+          sh './mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+        }
       }
     }
 
