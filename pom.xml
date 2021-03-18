@@ -22,7 +22,7 @@
 
 		<!-- Obtained from Sonarcloud which includes the configuration for this 
 			project's analysis -->
-		<sonar.projectKey>210201sre_pipeline-demo</sonar.projectKey>
+		<sonar.projectKey>Blockbuster</sonar.projectKey>
 		<sonar.organization>210201sre</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
@@ -191,6 +191,11 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.7.0.1746</version>
+			</plugin>
 
 			<plugin>
 				<groupId>org.jacoco</groupId>
