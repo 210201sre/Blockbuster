@@ -1,4 +1,4 @@
-FROM maven:3.6.3-openjdk-8 as builder
+FROM maven:3.6.3-openjdk-11 as builder
 # base image with jdk 11 and maven
 # jdk 11 is needed for jacoco
 
