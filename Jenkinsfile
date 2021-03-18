@@ -57,20 +57,27 @@ pipeline {
   }
 
   stages {
-    stage('Build'){
+    stage('Build') {
       steps {
         sh 'docker build -t $DOCKER_IMAGE_NAME .'
-        script{
+        script {
           app = docker.image(DOCKER_IMAGE_NAME)
         }
         sh 'docker images'
       }
     }
 
-    stage('Push Docker Image'){
-      steps{
-        script{
-          docker.withRegistry('https://registry.hub.docker.com', 'docker-blockbuster-token'){
+    // Check which version of java is being used, must be 11
+    stage('Sonar Quality Check') {
+      steps {
+        sh 'java -version'
+      }
+    }
+
+    stage('Push Docker Image') {
+      steps {
+        script {
+          docker.withRegistry('https://registry.hub.docker.com', 'docker-blockbuster-token') {
             app.push('latest')
             app.push("${env.BUILD_NUMBER}")
             app.push("${env.GIT_COMMIT}")
