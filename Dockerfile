@@ -1,4 +1,4 @@
-FROM ubuntu:latest as builder
+FROM java:8 as builder
 # need to use java 8 so run it 
 
 # Copy pom.xml and source-code
