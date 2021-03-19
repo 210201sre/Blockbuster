@@ -1,11 +1,15 @@
-FROM maven:3.6.3-openjdk-8 as builder
+FROM ubuntu:latest as builder
 # need to use java 8 so run it 
 
 # Copy pom.xml and source-code
+COPY mvnw mvnw
+COPY mvnw.cmd mvnw.cmd
+COPY .mvn .mvn
 COPY pom.xml pom.xml
 COPY src/ src/
 
 # Build the application
+RUN chmod +x mvnw
 RUN mvn clean package
 
 # Separate stage to save the resulting image size

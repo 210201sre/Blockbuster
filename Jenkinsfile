@@ -20,7 +20,7 @@ pipeline {
             value: tcp://localhost:2375
           resources:
             requests:
-              memory: "600Mi"
+              memory: "500Mi"
               cpu: "0.3"
             limits:
               memory: "800Mi"
