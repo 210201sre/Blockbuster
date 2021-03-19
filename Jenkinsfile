@@ -98,9 +98,7 @@ pipeline {
           container('kubectl') {
             withKubeConfig([credentialsId: 'kubeconfig']) {
               sh "aws eks update-kubeconfig --name matt-oberlies-sre-943"
-              sh 'kubectl get pods'
-              sh 'kubectl delete deployment -n blockbuster blockbuster'
-              sh 'kubectl apply -f blockbuster-deployment.yml'
+              sh 'kubectl get pods -n blockbuster'
             }
           }
         }
