@@ -1,4 +1,4 @@
-FROM java:8 as builder
+FROM maven:3.6.3-opendjdk-8 as builder
 # need to use java 8 so run it 
 
 # Copy pom.xml and source-code
@@ -10,7 +10,7 @@ COPY src/ src/
 
 # Build the application
 RUN chmod +x mvnw
-RUN ./mvnw clean package
+RUN mvn clean package
 
 # Separate stage to save the resulting image size
 FROM java:8 as runner
