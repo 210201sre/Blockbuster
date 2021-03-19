@@ -20,10 +20,10 @@ pipeline {
             value: tcp://localhost:2375
           resources:
             requests:
-              memory: "500Mi"
+              memory: "800Mi"
               cpu: "0.3"
             limits:
-              memory: "800Mi"
+              memory: "1000Mi"
               cpu: "0.5"
         - name: dind-daemon
           image: docker:18-dind
@@ -35,10 +35,10 @@ pipeline {
             mountPath: /var/lib/docker
           resources:
             requests:
-              memory: "300Mi"
+              memory: "400Mi"
               cpu: "0.3"
             limits:
-              memory: "500Mi"
+              memory: "600Mi"
               cpu: "0.5"
         - name: kubectl
           image: jshimko/kube-tools-aws:latest
