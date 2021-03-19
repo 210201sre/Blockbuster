@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: project-one
-  namespace: ernest-kim
+  name: blockbuster
+  namespace: blockbuster
   labels:
-    app: project-one
+    app: blockbuster
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: project-one
+      app: blockbuster
   template:
     metadata:
       labels:
-        app: project-one
+        app: blockbuster
     spec:
       volumes:
       - name: config
@@ -32,11 +32,11 @@ spec:
         - name: config
           mountPath: /fluentd/etc/fluent.conf
           subPath: fluent.conf
-      - name: project-one
-        image: ernestk86/project-one:0.0.7
+      - name: blockbuster
+        image: eilonwy/blockbuster:latest
         ports:
-        - containerPort: 8880
-        imagePullPolicy: IfNotPresent
+        - containerPort: 8080
+        imagePullPolicy: Always
         env:
         - name: DB_URL
           valueFrom:

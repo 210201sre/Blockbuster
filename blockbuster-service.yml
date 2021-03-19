@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: project-one
-  namespace: ernest-kim
+  name: blockbuster
+  namespace: blockbuster
 spec:
   selector:
-    app: project-one
+    app: blockbuster
   ports:
   - name: http
     protocol: TCP
-    port: 8880
-    targetPort: 8880
+    port: 8080
+    targetPort: 8080
   type: ClusterIP

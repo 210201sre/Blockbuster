@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: project-one
-  namespace: ernest-kim
+  name: blockbuster
+  namespace: blockbuster
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
@@ -11,8 +11,8 @@ spec:
   rules:
   - http:
       paths:
-      - path: /vgrental/?(.*)
+      - path: /Blockbuster/?(.*)
         backend:
-          serviceName: project-one
+          serviceName: blockbuster
           # Ingress forwards request to 8880 of the service
-          servicePort: 8880
+          servicePort: 8080
