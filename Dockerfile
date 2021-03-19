@@ -10,7 +10,7 @@ COPY src/ src/
 
 # Build the application
 RUN chmod +x mvnw
-RUN mvn clean package
+RUN ./mvnw clean package
 
 # Separate stage to save the resulting image size
 FROM java:8 as runner
