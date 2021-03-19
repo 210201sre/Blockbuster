@@ -1,4 +1,4 @@
-FROM maven:3.6.3-opendjdk-8 as builder
+FROM maven:3.6.3-openjdk-8 as builder
 # need to use java 8 so run it 
 
 # Copy pom.xml and source-code
