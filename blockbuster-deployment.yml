@@ -41,30 +41,30 @@ spec:
         - name: DB_URL
           valueFrom:
             secretKeyRef:
-              name: project-one-credentials
+              name: env-var
               key: DB_URL
         - name: DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: project-one-credentials
+              name: env-var
               key: DB_USERNAME
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: project-one-credentials
+              name: env-var
               key: DB_PASSWORD
         - name: AWS_SES_HOST
           valueFrom:
             secretKeyRef:
-              name: project-one-credentials
+              name: env-var
               key: AWS_SES_HOST
         - name: AWS_SES_USERNAME
           valueFrom:
             secretKeyRef:
-              name: project-one-credentials
+              name: env-var
               key: AWS_SES_USERNAME
         - name: AWS_SES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: project-one-credentials
+              name: env-var
               key: AWS_SES_PASSWORD
