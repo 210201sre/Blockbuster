@@ -74,8 +74,6 @@ pipeline {
         sh 'chmod +x mvnw'
         withSonarQubeEnv(credentialsId: 'sonar-blockbuster-token', installationName: 'sonarcloud') {
           sh './mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-          //sh './mvnw -B clean package sonar:sonar'
-          //sh './mvnw -B org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
         }
       }
     }
@@ -99,7 +97,6 @@ pipeline {
             withKubeConfig([credentialsId: 'kubeconfig']) {
               sh "aws eks update-kubeconfig --name matt-oberlies-sre-943"
               sh 'kubectl get pods -n blockbuster'
-              sh 'kubectl apply -f blockbuster-deployment.yml'
             }
           }
         }
