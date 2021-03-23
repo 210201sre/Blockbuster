@@ -12,6 +12,7 @@ import org.jboss.logging.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.blockbuster.exceptions.PasswordMismatchException;
@@ -20,10 +21,17 @@ import com.blockbuster.models.Rental;
 import com.blockbuster.models.User;
 import com.blockbuster.repositories.UserDAO;
 
+import io.micrometer.core.instrument.MeterRegistry;
+
 @Service
 public class UserService {
 	
 	private static final Logger log = LoggerFactory.getLogger(UserService.class);
+	private MeterRegistry meterRegistry;
+	private static final String CONNECTIONATTEMPT = "connection_attempt";
+	private static final String TYPE = "type";
+	private static final String SUCCESS = "success";
+	private static final String FAIL = "fail";
 	
 	@Autowired
 	private HttpServletRequest req;
@@ -35,21 +43,48 @@ public class UserService {
 		MDC.put("findAll", "user");
 		log.info("Retrieving all users");
 		MDC.clear();
-		return userDAO.findAll()
+		
+		Set<User> allUsers = Collections.emptySet();
+		
+		try {
+			allUsers = userDAO.findAll()
 				.stream()
 				.collect(Collectors.toSet());
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		} catch (DataAccessException e) {
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+		}
+		
+		return allUsers;
 	}
 	
 	public User insert(User u) {
 		MDC.put("insert", u);
 		log.info("Updating/inserting user");
 		MDC.clear();
-		return userDAO.save(u);
+		
+		User newUser = null;
+		
+		try {
+			newUser = userDAO.save(u);
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		} catch (DataAccessException e) {
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+		}
+		
+		return newUser;
 	}
 	
 	public Set<Rental> getRentals(String username){
 		MDC.put("username", username);
-		Optional<User> u = userDAO.findByUsername(username);
+		Optional<User> u = null;
+		
+		try {
+			u = userDAO.findByUsername(username);
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		} catch (DataAccessException e) {
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+		}
 		
 		if (u.isPresent()) {
 			log.info("Retrieving user's rentals list");
@@ -64,7 +99,14 @@ public class UserService {
 	
 	public User findByUsername(String username) {
 		MDC.put("username", username);
-		Optional<User> u = userDAO.findByUsername(username);
+		Optional<User> u = null;
+		
+		try {
+			u = userDAO.findByUsername(username);
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		} catch (DataAccessException e) {
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+		}		
 		
 		if(u.isPresent()) {
 			log.info("Found user");
@@ -79,7 +121,14 @@ public class UserService {
 	
 	public User findById(int userId) {
 		MDC.put("userId", Integer.toString(userId));
-		User u = userDAO.findById(userId).orElse(null);
+		User u = null;
+		
+		try {
+			u = userDAO.findById(userId).orElse(null);
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		} catch (DataAccessException e) {
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+		}	
 		
 		if(u != null) {
 			log.info("User found");
@@ -93,17 +142,26 @@ public class UserService {
 	
 	public boolean deleteById(int userId) {
 		MDC.put("userId", Integer.toString(userId));
-		Optional<User> u = userDAO.findById(userId);
+		Optional<User> u = null;
+		
+		try {
+			u = userDAO.findById(userId);
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		} catch (DataAccessException e) {
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+		}	
 		
 		if(u.isPresent()) {
 			try {
 				userDAO.deleteById(userId);
+				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
 				log.info("User deleted from DB");
 				MDC.clear();
 				return true;
-			} catch(IllegalArgumentException e) {
+			} catch(DataAccessException e) {
 				log.error("User does not exist", e);
 				MDC.clear();
+				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
 				return false;
 			}
 		}
@@ -115,15 +173,21 @@ public class UserService {
 	
 	public User login(String username, String password) {
 		MDC.put("login", username);
-		User u = userDAO.findByUsername(username)
-							.orElseThrow(() -> new UserNotFoundException(String.format("No User with username = %s", username)));
+		Optional <User> u = null;
 		
-		if(u.getPassword().equals(password)) {
+		try {
+			u = userDAO.findByUsername(username);
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		} catch (DataAccessException e) {
+			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+		}	
+		
+		if(u.get().getPassword().equals(password)) {
 			HttpSession session = req.getSession();
-			session.setAttribute("currentUser", u);
+			session.setAttribute("currentUser", u.get());
 			log.info("User successfully logged in");
 			MDC.clear();
-			return u;
+			return u.get();
 		} else {
 			throw new PasswordMismatchException();
 		}
