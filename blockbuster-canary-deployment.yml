@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blockbuster-canary
+  namespace: blockbuster
+  labels:
+    app: blockbuster
+spec:
+  replicas: $CANARY_REPLICAS
+  selector:
+    matchLabels:
+      app: blockbuster
+      track: canary
+  template:
+    metadata:
+      labels:
+        app: blockbuster
+        track: canary
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: fluent-conf
+      containers:
+      - name: fluentd
+        image: grafana/fluent-plugin-loki:latest
+        ports:
+        - containerPort: 24224
+        env:
+        - name: LOKI_URL
+          value: "http://loki:3100"
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: config
+          mountPath: /fluentd/etc/fluent.conf
+          subPath: fluent.conf
+      - name: blockbuster
+        image: $DOCKER_IMAGE_NAME:$GIT_COMMIT
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
+        env:
+        - name: DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: env-var
+              key: DB_URL
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: env-var
+              key: DB_USERNAME
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: env-var
+              key: DB_PASSWORD
+        - name: AWS_SES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: env-var
+              key: AWS_SES_HOST
+        - name: AWS_SES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: env-var
+              key: AWS_SES_USERNAME
+        - name: AWS_SES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: env-var
+              key: AWS_SES_PASSWORD
