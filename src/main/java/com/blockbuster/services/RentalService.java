@@ -25,6 +25,7 @@ import com.blockbuster.repositories.GameDAO;
 import com.blockbuster.repositories.RentalDAO;
 import com.blockbuster.repositories.UserDAO;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
 @Service
@@ -32,10 +33,18 @@ public class RentalService {
 	
 	private static final Logger log = LoggerFactory.getLogger(RentalService.class);
 	private MeterRegistry meterRegistry;
+	private Counter failedConnectionAttempts;
+	private Counter successfulConnectionAttempts;
 	private static final String CONNECTIONATTEMPT = "connection_attempt";
 	private static final String TYPE = "type";
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
+	
+	public RentalService (MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        successfulConnectionAttempts = meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		failedConnectionAttempts = meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+    }
 	
 	@Autowired
 	private RentalDAO rentalDAO;
@@ -55,11 +64,11 @@ public class RentalService {
 		
 		try {
 			u = userDAO.findById(userId).orElse(null);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 			g = gameDAO.findById(gameId).orElse(null);	
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}
 		
 		if(u == null) {
@@ -80,11 +89,11 @@ public class RentalService {
 			
 			try {
 				gameDAO.save(g);
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+				successfulConnectionAttempts.increment(1);
 				newRental = rentalDAO.save(r);
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+				successfulConnectionAttempts.increment(1);
 			} catch (DataAccessException e) {
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+				failedConnectionAttempts.increment(1);
 			}
 			
 			MDC.put("insert", r.toString());
@@ -103,15 +112,15 @@ public class RentalService {
 		MDC.put("gameId", Integer.toString(gameId));
 		try {
 			rentalDAO.deleteById(gameId);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 			log.info("Game has been successfully returned");
 			MDC.clear();
 			Game g = gameDAO.findById(gameId).orElse(null);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 			if(g != null) {
 				g.setAvailable(true); // Make game available
 				gameDAO.save(g);
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+				successfulConnectionAttempts.increment(1);
 				log.info("Game has been set to available");
 				MDC.clear();
 				return true;
@@ -123,7 +132,7 @@ public class RentalService {
 		} catch(DataAccessException e) {
 			log.error("Can't delete a rental for a game that doesn't exist", e);
 			MDC.clear();
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 			return false;
 		}
 	}
@@ -201,9 +210,9 @@ public class RentalService {
 		
 		try {
 			r = rentalDAO.findById(gameId).orElse(null);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}
 		
 		if(r != null) {
@@ -211,9 +220,9 @@ public class RentalService {
 			
 			try {
 				rentalDAO.save(r);
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+				successfulConnectionAttempts.increment(1);
 			} catch (DataAccessException e) {
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+				failedConnectionAttempts.increment(1);
 			}
 			
 			if(r.isOverDue()) {
@@ -235,9 +244,9 @@ public class RentalService {
 		
 		try {
 			r = rentalDAO.findById(gameId).orElse(null);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}		
 			
 		if(r != null) {
@@ -245,9 +254,9 @@ public class RentalService {
 			
 			try {
 				rentalDAO.save(r);
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+				successfulConnectionAttempts.increment(1);
 			} catch (DataAccessException e) {
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+				failedConnectionAttempts.increment(1);
 			}
 			
 			log.info("Rental updated");

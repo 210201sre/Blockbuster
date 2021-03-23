@@ -16,11 +16,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.blockbuster.exceptions.PasswordMismatchException;
-import com.blockbuster.exceptions.UserNotFoundException;
 import com.blockbuster.models.Rental;
 import com.blockbuster.models.User;
 import com.blockbuster.repositories.UserDAO;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
 @Service
@@ -28,10 +28,18 @@ public class UserService {
 	
 	private static final Logger log = LoggerFactory.getLogger(UserService.class);
 	private MeterRegistry meterRegistry;
+	private Counter failedConnectionAttempts;
+	private Counter successfulConnectionAttempts;
 	private static final String CONNECTIONATTEMPT = "connection_attempt";
 	private static final String TYPE = "type";
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
+	
+	public UserService(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        successfulConnectionAttempts = meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		failedConnectionAttempts = meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+    }
 	
 	@Autowired
 	private HttpServletRequest req;
@@ -50,9 +58,9 @@ public class UserService {
 			allUsers = userDAO.findAll()
 				.stream()
 				.collect(Collectors.toSet());
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}
 		
 		return allUsers;
@@ -67,9 +75,9 @@ public class UserService {
 		
 		try {
 			newUser = userDAO.save(u);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}
 		
 		return newUser;
@@ -81,9 +89,9 @@ public class UserService {
 		
 		try {
 			u = userDAO.findByUsername(username);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}
 		
 		if (u.isPresent()) {
@@ -103,9 +111,9 @@ public class UserService {
 		
 		try {
 			u = userDAO.findByUsername(username);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}		
 		
 		if(u.isPresent()) {
@@ -125,9 +133,9 @@ public class UserService {
 		
 		try {
 			u = userDAO.findById(userId).orElse(null);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}	
 		
 		if(u != null) {
@@ -146,22 +154,22 @@ public class UserService {
 		
 		try {
 			u = userDAO.findById(userId);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}	
 		
 		if(u.isPresent()) {
 			try {
 				userDAO.deleteById(userId);
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+				successfulConnectionAttempts.increment(1);
 				log.info("User deleted from DB");
 				MDC.clear();
 				return true;
 			} catch(DataAccessException e) {
 				log.error("User does not exist", e);
 				MDC.clear();
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+				failedConnectionAttempts.increment(1);
 				return false;
 			}
 		}
@@ -177,9 +185,9 @@ public class UserService {
 		
 		try {
 			u = userDAO.findByUsername(username);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}	
 		
 		if(u.get().getPassword().equals(password)) {

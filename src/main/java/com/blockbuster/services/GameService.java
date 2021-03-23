@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.blockbuster.models.Game;
 import com.blockbuster.repositories.GameDAO;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
 @Service
@@ -22,10 +23,18 @@ public class GameService {
 	
 	private static final Logger log = LoggerFactory.getLogger(GameService.class);
 	private MeterRegistry meterRegistry;
+	private Counter failedConnectionAttempts;
+	private Counter successfulConnectionAttempts;
 	private static final String CONNECTIONATTEMPT = "connection_attempt";
 	private static final String TYPE = "type";
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
+	
+	public GameService (MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        successfulConnectionAttempts = meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+		failedConnectionAttempts = meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+    }
 	
 	@Autowired
 	private GameDAO gameDAO;
@@ -39,9 +48,9 @@ public class GameService {
 			allGames = gameDAO.findAll()
 				.stream()
 				.collect(Collectors.toSet());
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}
 		
 		if(!allGames.isEmpty()) {
@@ -63,10 +72,10 @@ public class GameService {
 			MDC.clear();
 			try {
 				Game savedGame = gameDAO.save(g);
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+				successfulConnectionAttempts.increment(1);
 				return savedGame;
 			} catch (DataAccessException e) {
-				meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+				failedConnectionAttempts.increment(1);
 			}
 		}
 		
@@ -79,9 +88,9 @@ public class GameService {
 		
 		try {
 			g = gameDAO.findById(gameId).orElse(null);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch (DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}
 		
 		if(g != null) {
@@ -99,12 +108,12 @@ public class GameService {
 		try {
 			MDC.put("deleteById", gameId);
 			gameDAO.deleteById(gameId);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 			log.info("Game deleted by DAO");
 			MDC.clear();
 			return true;
 		} catch(DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 			log.error("Game not found", e);
 			return false;
 		}
@@ -116,9 +125,9 @@ public class GameService {
 		
 		try {
 			searchResults = gameDAO.searchByName(name);
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
+			successfulConnectionAttempts.increment(1);
 		} catch(DataAccessException e) {
-			meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+			failedConnectionAttempts.increment(1);
 		}
 		
 		if(searchResults.isEmpty()) {
