@@ -1,11 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: blockbuster
+  name: vg-rental
   namespace: blockbuster
+  labels:
+    app: vg-rental
 spec:
   selector:
-    app: blockbuster
+    app: vg-rental
   ports:
   - name: http
     protocol: TCP
