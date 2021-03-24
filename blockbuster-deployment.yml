@@ -4,16 +4,18 @@ metadata:
   name: vg-rental
   namespace: blockbuster
   labels:
-    app: vg-rental
+    app: blockbuster
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: vg-rental
+      track: stable
   template:
     metadata:
       labels:
         app: vg-rental
+        track: stable
     spec:
       volumes:
       - name: config
