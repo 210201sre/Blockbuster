@@ -4,13 +4,12 @@ metadata:
   name: vg-rental
   namespace: blockbuster
   labels:
-    app: blockbuster
+    app: vg-rental
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: vg-rental
-      track: stable
   template:
     metadata:
       labels:
