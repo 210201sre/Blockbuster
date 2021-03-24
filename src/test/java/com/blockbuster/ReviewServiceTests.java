@@ -31,101 +31,104 @@ import com.blockbuster.models.Review;
 import com.blockbuster.repositories.ReviewDAO;
 import com.blockbuster.services.ReviewService;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+
 @ExtendWith(MockitoExtension.class)
-public class ReviewServiceTests {
+class ReviewServiceTests {
 	@InjectMocks
-	ReviewService reviewService;
+	ReviewService reviewService = new ReviewService(new SimpleMeterRegistry());
 
 	@Mock
 	ReviewDAO reviewDAO;
-	
+
 	@Mock
 	Game g;
-	
+
 	@Mock
 	Review r;
-	
+
 	private static final int testId = 1;
 	private static Optional<Review> testReview;
 	private static Game testGame;
-	
+
 	@BeforeAll
 	public static void setUpAll() {
-		testGame = new Game(1, "First", GENRE.ACTION_ADVENTURE, CONSOLES.SNES, "Publisher", "Developer", LocalDate.of(1983, 1, 13));
-		testReview = Optional.ofNullable(
-				new Review(1, testGame, 10, "First")
-		);
+		testGame = new Game(1, "First", GENRE.ACTION_ADVENTURE, CONSOLES.SNES, "Publisher", "Developer",
+				LocalDate.of(1983, 1, 13));
+		testReview = Optional.ofNullable(new Review(1, testGame, 10, "First"));
 	}
-	
+
 	@AfterAll
 	public static void tearDownAll() {
 		testReview = null;
 	}
-	
+
 	@Test
-	public void testFindAll() {
+	void testFindAll() {
 		List<Review> result = new ArrayList<Review>();
 		result.add(new Review(1, g, 10, "First review"));
 		result.add(new Review(2, g, 6, "Second review"));
-	
+
 		when(reviewDAO.findAll()).thenReturn(result);
-		
+
 		assertEquals(2, reviewService.findAll().size());
-		
+
 		verify(reviewDAO, times(1)).findAll();
 	}
-	
+
 	@Test
-	public void testInsert() {
+	void testInsert() {
 		when(reviewDAO.save(r)).thenReturn(r);
-		
+
 		assertSame(r, reviewService.insert(r));
-		
+
 		verify(reviewDAO, times(1)).save(r);
 	}
-	
+
 	@Test
-	public void testDeleteById() {
+	void testDeleteById() {
 		doNothing().when(reviewDAO).deleteById(testId);
-		
+
 		assertTrue(reviewService.deleteById(testId));
-		
+
 		verify(reviewDAO, times(1)).deleteById(testId);
 	}
-	
+
 	@Test
-	public void testFailedDeleteById() {
+	void testFailedDeleteById() {
 		doThrow(IllegalArgumentException.class).when(reviewDAO).deleteById(testId);
-		
-		assertFalse(reviewService.deleteById(testId));
-		
+		try {
+			assertFalse(reviewService.deleteById(testId));
+		} catch (IllegalArgumentException ex) {
+
+		}
 		verify(reviewDAO, times(1)).deleteById(testId);
 	}
-	
+
 	@Test
-	public void testGetAverageRating() {
+	void testGetAverageRating() {
 		double testResult = 7.7;
-		
+
 		when(reviewDAO.getAverageRating(testId)).thenReturn(testResult);
-		
+
 		assertEquals(testResult, reviewService.getAverageRating(testId));
-		
+
 		verify(reviewDAO, times(1)).getAverageRating(testId);
 	}
-	
+
 	@Test
-	public void testFindById() {
+	void testFindById() {
 		when(reviewDAO.findById(r.getId())).thenReturn(testReview);
-		
+
 		assertSame(testReview.get(), reviewService.findById(r.getId()));
-		
+
 		verify(reviewDAO, times(1)).findById(r.getId());
 	}
-	
+
 	@Test
-	public void testFailFindById() {
+	void testFailFindById() {
 		assertNull(reviewService.findById(r.getId()));
-		
+
 		verify(reviewDAO, times(1)).findById(r.getId());
 	}
 }
