@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: vg-rental-prometheus-rules-email
+  namespace: vg-rental
+  labels:
+    app: vg-rental
+    job: vg-rental
+    release: prometheus
+    team: sre
+spec:
+  groups:
+  - name: Blockbuster-Emails-Sent
+    rules:
+    - alert: EmailLimit
+      annotations:
+        message: 'Email send rate will reach capacity'
+      expr: |
+        rate(email_total{namespace="blockbuster"}[1h]) > ((200 / 24) / 360)
+        and
+        rate(email_total{namespace="blockbuster"}[5m]) > (200 / 300)
+      for: 2m
+      labels:
+        namespace: blockbuster
+        severity: critical
+    - alert: EmailLimit
+      annotations:
+        message: 'Email send rate will reach capacity'
+      expr: |
+        rate(email_total{namespace="blockbuster"}[6h]) > ((200 / 24) / 2160)
+        and
+        rate(email_total{namespace="blockbuster"}[30m]) > (200 / 1800)
+      for: 15m
+      labels:
+        namespace: blockbuster
+        severity: critical
+    - alert: EmailLimit
+      annotations:
+        message: 'Email send rate is getting high'
+      expr: |
+        rate(email_total{namespace="blockbuster"}[1h]) > ((150 / 24) / 360)
+        and
+        rate(email_total{namespace="blockbuster"}[5m]) > (150 / 300)
+      for: 2m
+      labels:
+        namespace: blockbuster
+        severity: warning
+    - alert: EmailLimit
+      annotations:
+        message: 'Email send rate is getting high'
+      expr: |
+        rate(email_total{namespace="blockbuster"}[6h]) > ((150 / 24) / 2160)
+        and
+        rate(email_total{namespace="blockbuster"}[30m]) > (150 / 1800)
+      for: 15m
+      labels:
+        namespace: blockbuster
+        severity: warning
