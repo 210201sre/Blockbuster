@@ -77,6 +77,15 @@ pipeline {
         }
       }
     }
+    stage('Sonar Quality Gate') {
+      steps {
+        script {
+          timeout(time: 30, unit: 'MINUTES') {
+            qualitygate = waitForQualityGate abortPipeline: true
+          }
+        }
+      }
+    }
 
     stage('Push Docker Image') {
       steps {
@@ -85,6 +94,42 @@ pipeline {
             app.push('latest')
             app.push("${env.BUILD_NUMBER}")
             app.push("${env.GIT_COMMIT}")
+          }
+        }
+      }
+    }
+
+    stage('Canary Deployment'){
+      environment {
+        CANARY_REPLICAS = 1
+      }
+      steps {
+        script {
+          container('kubectl') {
+            withKubeConfig([credentialsId: 'kubeconfig']) {
+              sh "aws eks update-kubeconfig --name matt-oberlies-sre-943"
+              sh "kubectl set image -n blockbuster deployment/vg-rental-canary vg-rental-canary=$DOCKER_IMAGE_NAME:$GIT_COMMIT"
+              sh "kubectl scale -n blockbuster deployment.apps/vg-rental-canary --replicas=$CANARY_REPLICAS"
+            }
+          }
+        }
+      }
+    }
+
+    stage('Production Deployment'){
+      environment {
+        CANARY_REPLICAS = 0
+      }
+      steps {
+        input 'Deploy to Production?'
+
+        script {
+          container('kubectl') {
+            withKubeConfig([credentialsId: 'kubeconfig']) {
+              sh "aws eks update-kubeconfig --name matt-oberlies-sre-943"
+              sh "kubectl scale -n blockbuster deployment.apps/vg-rental-canary --replicas=$CANARY_REPLICAS"
+              sh "kubectl set image -n blockbuster deployment/vg-rental vg-rental=$DOCKER_IMAGE_NAME:$GIT_COMMIT"
+            }
           }
         }
       }
