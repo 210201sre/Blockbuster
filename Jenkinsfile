@@ -135,7 +135,7 @@ pipeline {
       }
     }
 
-    stage('kuberneties delete/reapply deployment') {
+    stage('See pods') {
       steps{
         script {
           container('kubectl') {
