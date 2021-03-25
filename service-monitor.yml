@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: blockbuster-prometheus
+  namespace: blockbuster
+  labels:
+    env: production
+spec:
+  selector:
+    matchLabels:
+      app: blockbuster
+  endpoints:
+  - port: web
