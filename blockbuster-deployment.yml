@@ -22,7 +22,7 @@ spec:
           name: fluent-conf
       containers:
       - name: fluentd
-        image: grafana/fluent-plugin-loki:latest
+        image: eilonwy/grafana-fluent-loki:latest
         ports:
         - containerPort: 24224
         env:
