@@ -1,0 +1,768 @@
+{
+	"info": {
+		"_postman_id": "62ca82ea-021b-459d-b5bb-f43088a4cc0f",
+		"name": "Project Two SRE cluster",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Controller",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Get all users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/users",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register admin BODY",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 0,\r\n    \"username\": \"SomeAdmin\",\r\n    \"password\": \"easy\",\r\n    \"dateOfBirth\": \"1982-06-23\",\r\n    \"address\": \"The Hills St.\",\r\n    \"city\": \"Borderline Rural Suburb\",\r\n    \"state\": \"PA\",\r\n    \"zipCode\": 50002,\r\n    \"role\": \"ADMIN\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/users/admin",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"users",
+										"admin"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Customer",
+					"item": [
+						{
+							"name": "Get user data with rentals PATH",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/users/11",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"users",
+										"11"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user PATH",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/users/9",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"users",
+										"9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update user BODY",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 7,\r\n    \"username\": \"WannabeAdmin\",\r\n    \"password\": \"easy\",\r\n    \"dateOfBirth\": \"1982-06-23\",\r\n    \"address\": \"The Hills St.\",\r\n    \"city\": \"Borderline Rural Suburb\",\r\n    \"state\": \"NJ\",\r\n    \"zipCode\": 99999,\r\n    \"role\": \"ADMIN\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/users",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"users"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Register user BODY",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 0,\r\n    \"username\": \"AnotherErnest\",\r\n    \"password\": \"pass\",\r\n    \"dateOfBirth\": \"1987-04-23\",\r\n    \"address\": \"The Hills St.\",\r\n    \"city\": \"Suburban Town\",\r\n    \"state\": \"MA\",\r\n    \"zipCode\": 11754,\r\n    \"role\": \"CUSTOMER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/users",
+							"protocol": "http",
+							"host": [
+								"a62d60162057149549617360016d2e38-542496291",
+								"us-east-1",
+								"elb",
+								"amazonaws",
+								"com"
+							],
+							"port": "80",
+							"path": [
+								"blockbuster",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rental Controller",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Change due date",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "2021-03-10",
+									"options": {
+										"raw": {
+											"language": "text"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/rent/changeDate/9",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"rent",
+										"changeDate",
+										"9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Toggle rental overdue",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/rent/overdue/9",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"rent",
+										"overdue",
+										"9"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Customer",
+					"item": [
+						{
+							"name": "Get rentals of a user PATH",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/rent/WannabeAdmin",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"rent",
+										"WannabeAdmin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rent a game PATH userid gameid",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/rent/11/9",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"rent",
+										"11",
+										"9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Return game",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/rent/11/9",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"rent",
+										"11",
+										"9"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Review Controller",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Get all reviews",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/reviews",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"reviews"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete review PATH",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/reviews/17",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"reviews",
+										"17"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Customer",
+					"item": [
+						{
+							"name": "Post review BODY",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\" : 0,\r\n    \"game\" : {\r\n        \"id\": 15\r\n    },\r\n    \"rating\" : 10,\r\n    \"writtenReview\" : \"This is the most relaxing game ever\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/reviews",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"reviews"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Game Controller",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Get all game data",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/games",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"games"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create new game",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 0,\r\n    \"name\": \"Another Test Game\",\r\n    \"genre\": \"MOBA\",\r\n    \"console\": \"GAMEGEAR\",\r\n    \"publisher\": \"Publischer\",\r\n    \"developer\": \"Develope Her\",\r\n    \"dateReleased\": \"2020-03-26\",\r\n    \"multiplayer\": \"true\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/games",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"games"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete game",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/games/7",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"games",
+										"7"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change game data",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 8,\r\n    \"name\": \"Created to be deleted AGAIN\",\r\n    \"genre\": \"HORROR\",\r\n    \"console\": \"WII\",\r\n    \"publisher\": \"Some Publisher\",\r\n    \"developer\": \"Some dude singular\",\r\n    \"dateReleased\": \"1998-02-28\",\r\n    \"multiplayer\": \"true\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/games",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"games"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Customer",
+					"item": [
+						{
+							"name": "Get game data for single game",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"rick\"\r\n}"
+								},
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/games/3",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"games",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search for game",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/games/search/h",
+									"protocol": "http",
+									"host": [
+										"a62d60162057149549617360016d2e38-542496291",
+										"us-east-1",
+										"elb",
+										"amazonaws",
+										"com"
+									],
+									"port": "80",
+									"path": [
+										"blockbuster",
+										"games",
+										"search",
+										"h"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Login Controller",
+			"item": [
+				{
+					"name": "ADMIN login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/login",
+							"protocol": "http",
+							"host": [
+								"a62d60162057149549617360016d2e38-542496291",
+								"us-east-1",
+								"elb",
+								"amazonaws",
+								"com"
+							],
+							"port": "80",
+							"path": [
+								"blockbuster",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login SUCCESS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"WannabeAdmin\",\r\n    \"password\" : \"easy\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/login",
+							"protocol": "http",
+							"host": [
+								"a62d60162057149549617360016d2e38-542496291",
+								"us-east-1",
+								"elb",
+								"amazonaws",
+								"com"
+							],
+							"port": "80",
+							"path": [
+								"blockbuster",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login FAIL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"TestUser\",\r\n    \"password\" : \"easy\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/login",
+							"protocol": "http",
+							"host": [
+								"a62d60162057149549617360016d2e38-542496291",
+								"us-east-1",
+								"elb",
+								"amazonaws",
+								"com"
+							],
+							"port": "80",
+							"path": [
+								"blockbuster",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://a62d60162057149549617360016d2e38-542496291.us-east-1.elb.amazonaws.com:80/blockbuster/logout",
+							"protocol": "http",
+							"host": [
+								"a62d60162057149549617360016d2e38-542496291",
+								"us-east-1",
+								"elb",
+								"amazonaws",
+								"com"
+							],
+							"port": "80",
+							"path": [
+								"blockbuster",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
