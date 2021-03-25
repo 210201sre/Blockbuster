@@ -1,0 +1,76 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: vg-rental-recording-rules
+  namespace: blockbuster
+  labels:
+    app: vg-rental
+    job: vg-rental
+    release: prometheus
+    team: sre
+spec:
+  groups:
+  - name: vg-rental-recording-rules
+    rules:
+    - record: vg_rental:email_rate:5m
+      expr: rate(email_total{namespace="blockbuster"}[5m])
+    - record: vg_rental:email_rate:30m
+      expr: rate(email_total{namespace="blockbuster"}[30m])
+    - record: vg_rental:email_rate:1h
+      expr: rate(email_total{namespace="blockbuster"}[1h])
+    - record: vg_rental:email_rate:6h
+      expr: rate(email_total{namespace="blockbuster"}[6h])
+      
+      
+    - record: vg_rental:db_connection_rate:5m
+      expr: sum(rate(connection_attempt_total{type="success",}[5m]))
+              /
+            sum(rate(connection_attempt_total[5m]))
+    - record: vg_rental:db_connection_rate:30m
+      expr: sum(rate(connection_attempt_total{type="success",}[30m]))
+              /
+            sum(rate(connection_attempt_total[30m]))
+    - record: vg_rental:db_connection_rate:1h
+      expr: sum(rate(connection_attempt_total{type="success",}[1h]))
+              /
+            sum(rate(connection_attempt_total[1h]))
+    - record: vg_rental:db_connection_rate:6h
+      expr: sum(rate(connection_attempt_total{type="success",}[6h]))
+              /
+            sum(rate(connection_attempt_total[6h]))
+            
+    
+    - record: vg_rental:availability:5m
+      expr: sum(rate(http_server_requests_seconds_count{namespace="blockbuster", status!~"5.."}[5m]))
+              /
+            sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[5m]))
+    - record: vg_rental:availability:30m
+      expr: sum(rate(http_server_requests_seconds_count{namespace="blockbuster", status!~"5.."}[30m]))
+              /
+            sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[30m]))
+    - record: vg_rental:availability:1h
+      expr: sum(rate(http_server_requests_seconds_count{namespace="blockbuster", status!~"5.."}[1h]))
+              /
+            sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[1h]))
+    - record: vg_rental:availability_rate:6h
+      expr: sum(rate(http_server_requests_seconds_count{namespace="blockbuster", status!~"5.."}[6h]))
+              /
+            sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[6h]))
+            
+            
+    - record: vg_rental:latency:5m
+      expr: increase(http_server_requests_seconds_sum{container="vg_rental"}[10m])
+            /
+            increase(http_server_requests_seconds_count{container="vg_rental"}[10m])
+    - record: vg_rental:latency:30m
+      expr: increase(http_server_requests_seconds_sum{container="vg_rental"}[10m])
+            /
+            increase(http_server_requests_seconds_count{container="vg_rental"}[10m])
+    - record: vg_rental:latency:1h
+      expr: increase(http_server_requests_seconds_sum{container="vg_rental"}[10m])
+            /
+            increase(http_server_requests_seconds_count{container="vg_rental"}[10m])
+    - record: vg_rental:latency:6h
+      expr: increase(http_server_requests_seconds_sum{container="vg_rental"}[10m])
+            /
+            increase(http_server_requests_seconds_count{container="vg_rental"}[10m])
