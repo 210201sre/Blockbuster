@@ -13,7 +13,7 @@ pipeline {
       spec:
         containers:
         - name: jnlp
-          image: odavid/jenkins-jnlp-slave:jdk11
+          image: eilonwy/jenkins-slave:latest
           workingDir: /home/jenkins
           env:
           - name: DOCKER_HOST
@@ -26,7 +26,7 @@ pipeline {
               memory: "999Mi"
               cpu: "0.5"
         - name: dind-daemon
-          image: docker:18-dind
+          image: eilonwy/docker18-dind:latest
           workingDir: /var/lib/docker
           securityContext:
             privileged: true
@@ -41,7 +41,7 @@ pipeline {
               memory: "999Mi"
               cpu: "0.5"
         - name: kubectl
-          image: jshimko/kube-tools-aws:latest
+          image: eilonwy/kube-tools:latest
           command:
           - cat
           tty: true
