@@ -1,1 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: blockbuster-servicemonitor
+  namespace: blockbuster
+  labels:
+    app: vg-rental
+    release: prometheus
+spec:
+  endpoints:
+  - path: /actuator/prometheus
+    interval: 10s
+    port: http
+  namespaceSelector:
+    matchNames:
+    - blockbuster
+  selector:
+    matchLabels:
+      app: vg-rental
  
