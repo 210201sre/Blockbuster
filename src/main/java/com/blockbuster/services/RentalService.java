@@ -35,15 +35,19 @@ public class RentalService {
 	private MeterRegistry meterRegistry;
 	private Counter failedConnectionAttempts;
 	private Counter successfulConnectionAttempts;
+	private Counter emailSent;
 	private static final String CONNECTIONATTEMPT = "connection_attempt";
 	private static final String TYPE = "type";
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
+	private static final String EMAIL = "email";
+	private static final String SENT = "sent";
 	
 	public RentalService (MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
         successfulConnectionAttempts = meterRegistry.counter(CONNECTIONATTEMPT, TYPE, SUCCESS);
 		failedConnectionAttempts = meterRegistry.counter(CONNECTIONATTEMPT, TYPE, FAIL);
+		emailSent = meterRegistry.counter(EMAIL, TYPE, SENT);
     }
 	
 	@Autowired
@@ -196,6 +200,8 @@ public class RentalService {
 			
 			// Now send the message
 			Transport.send(messageobj);
+			
+			emailSent.increment(1);
 			
 			// Logging
 			log.info("Email successfully sent");

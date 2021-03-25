@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: blockbuster-canary
+  name: vg-rental-canary
   namespace: blockbuster
   labels:
-    app: blockbuster
+    app: vg-rental
 spec:
   replicas: $CANARY_REPLICAS
   selector:
     matchLabels:
-      app: blockbuster
+      app: vg-rental
       track: canary
   template:
     metadata:
       labels:
-        app: blockbuster
+        app: vg-rental
         track: canary
     spec:
       volumes:
@@ -34,7 +34,7 @@ spec:
         - name: config
           mountPath: /fluentd/etc/fluent.conf
           subPath: fluent.conf
-      - name: blockbuster
+      - name: vg-rental-canary
         image: $DOCKER_IMAGE_NAME:$GIT_COMMIT
         ports:
         - containerPort: 8080
