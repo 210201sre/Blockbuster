@@ -127,8 +127,8 @@ pipeline {
           container('kubectl') {
             withKubeConfig([credentialsId: 'kubeconfig']) {
               sh "aws eks update-kubeconfig --name matt-oberlies-sre-943"
-              sh "kubectl scale -n blockbuster deployment.apps/vg-rental-canary --replicas=$CANARY_REPLICAS"
               sh "kubectl set image -n blockbuster deployment/vg-rental vg-rental=$DOCKER_IMAGE_NAME:$GIT_COMMIT"
+              sh "kubectl scale -n blockbuster deployment.apps/vg-rental-canary --replicas=$CANARY_REPLICAS"
             }
           }
         }
