@@ -10,67 +10,98 @@ metadata:
     team: sre
 spec:
   groups:
-  - name: vg-rental-recording-rules
+  - name: Blockbuster-SLOs-http_server_requests_seconds_count
     rules:
-    - record: vg_rental:email_rate:5m
-      expr: rate(email_total{namespace="blockbuster"}[5m])
-    - record: vg_rental:email_rate:30m
-      expr: rate(email_total{namespace="blockbuster"}[30m])
-    - record: vg_rental:email_rate:1h
-      expr: rate(email_total{namespace="blockbuster"}[1h])
-    - record: vg_rental:email_rate:6h
-      expr: rate(email_total{namespace="blockbuster"}[6h])
-      
-      
-    - record: vg_rental:db_connection_rate:5m
-      expr: sum(rate(connection_attempt_total{type="success",}[5m]))
-              /
-            sum(rate(connection_attempt_total[5m]))
-    - record: vg_rental:db_connection_rate:30m
-      expr: sum(rate(connection_attempt_total{type="success",}[30m]))
-              /
-            sum(rate(connection_attempt_total[30m]))
-    - record: vg_rental:db_connection_rate:1h
-      expr: sum(rate(connection_attempt_total{type="success",}[1h]))
-              /
-            sum(rate(connection_attempt_total[1h]))
-    - record: vg_rental:db_connection_rate:6h
-      expr: sum(rate(connection_attempt_total{type="success",}[6h]))
-              /
-            sum(rate(connection_attempt_total[6h]))
-            
-    
-    - record: vg_rental:availability:5m
-      expr: sum(rate(http_server_requests_seconds_count{namespace="blockbuster", status!~"5.."}[5m]))
-              /
-            sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[5m]))
-    - record: vg_rental:availability:30m
-      expr: sum(rate(http_server_requests_seconds_count{namespace="blockbuster", status!~"5.."}[30m]))
-              /
-            sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[30m]))
-    - record: vg_rental:availability:1h
-      expr: sum(rate(http_server_requests_seconds_count{namespace="blockbuster", status!~"5.."}[1h]))
-              /
-            sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[1h]))
-    - record: vg_rental:availability_rate:6h
-      expr: sum(rate(http_server_requests_seconds_count{namespace="blockbuster", status!~"5.."}[6h]))
-              /
-            sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[6h]))
-            
-            
-    - record: vg_rental:latency:5m
-      expr: increase(http_server_requests_seconds_sum{container="vg_rental"}[10m])
-            /
-            increase(http_server_requests_seconds_count{container="vg_rental"}[10m])
-    - record: vg_rental:latency:30m
-      expr: increase(http_server_requests_seconds_sum{container="vg_rental"}[10m])
-            /
-            increase(http_server_requests_seconds_count{container="vg_rental"}[10m])
-    - record: vg_rental:latency:1h
-      expr: increase(http_server_requests_seconds_sum{container="vg_rental"}[10m])
-            /
-            increase(http_server_requests_seconds_count{container="vg_rental"}[10m])
-    - record: vg_rental:latency:6h
-      expr: increase(http_server_requests_seconds_sum{container="vg_rental"}[10m])
-            /
-            increase(http_server_requests_seconds_count{container="vg_rental"}[10m])
+    - alert: ErrorBudgetBurn
+      annotations:
+        message: 'High error budget burn for namespace=blockbuster (current value: {{ $value }})'
+      expr: |
+        sum(http_server_requests_seconds_count:burnrate5m{namespace="blockbuster"}) > (14.40 * (1-0.99900))
+        and
+        sum(http_server_requests_seconds_count:burnrate1h{namespace="blockbuster"}) > (14.40 * (1-0.99900))
+      for: 2m
+      labels:
+        namespace: blockbuster
+        severity: critical
+    - alert: ErrorBudgetBurn
+      annotations:
+        message: 'High error budget burn for namespace=blockbuster (current value: {{ $value }})'
+      expr: |
+        sum(http_server_requests_seconds_count:burnrate30m{namespace="blockbuster"}) > (6.00 * (1-0.99900))
+        and
+        sum(http_server_requests_seconds_count:burnrate6h{namespace="blockbuster"}) > (6.00 * (1-0.99900))
+      for: 15m
+      labels:
+        namespace: blockbuster
+        severity: critical
+    - alert: ErrorBudgetBurn
+      annotations:
+        message: 'High error budget burn for namespace=blockbuster (current value: {{ $value }})'
+      expr: |
+        sum(http_server_requests_seconds_count:burnrate2h{namespace="blockbuster"}) > (3.00 * (1-0.99900))
+        and
+        sum(http_server_requests_seconds_count:burnrate1d{namespace="blockbuster"}) > (3.00 * (1-0.99900))
+      for: 1h
+      labels:
+        namespace: blockbuster
+        severity: warning
+    - alert: ErrorBudgetBurn
+      annotations:
+        message: 'High error budget burn for namespace=blockbuster (current value: {{ $value }})'
+      expr: |
+        sum(http_server_requests_seconds_count:burnrate6h{namespace="blockbuster"}) > (1.00 * (1-0.99900))
+        and
+        sum(http_server_requests_seconds_count:burnrate3d{namespace="blockbuster"}) > (1.00 * (1-0.99900))
+      for: 3h
+      labels:
+        namespace: blockbuster
+        severity: warning
+    - expr: |
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster",code=~"5.."}[1d]))
+        /
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[1d]))
+      labels:
+        namespace: blockbuster
+      record: http_server_requests_seconds_count:burnrate1d
+    - expr: |
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster",code=~"5.."}[1h]))
+        /
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[1h]))
+      labels:
+        namespace: blockbuster
+      record: http_server_requests_seconds_count:burnrate1h
+    - expr: |
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster",code=~"5.."}[2h]))
+        /
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[2h]))
+      labels:
+        namespace: blockbuster
+      record: http_server_requests_seconds_count:burnrate2h
+    - expr: |
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster",code=~"5.."}[30m]))
+        /
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[30m]))
+      labels:
+        namespace: blockbuster
+      record: http_server_requests_seconds_count:burnrate30m
+    - expr: |
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster",code=~"5.."}[3d]))
+        /
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[3d]))
+      labels:
+        namespace: blockbuster
+      record: http_server_requests_seconds_count:burnrate3d
+    - expr: |
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster",code=~"5.."}[5m]))
+        /
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[5m]))
+      labels:
+        namespace: blockbuster
+      record: http_server_requests_seconds_count:burnrate5m
+    - expr: |
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster",code=~"5.."}[6h]))
+        /
+        sum(rate(http_server_requests_seconds_count{namespace="blockbuster"}[6h]))
+      labels:
+        namespace: blockbuster
+      record: vg-rental:http_server_requests_seconds_count:burnrate6h
