@@ -16,7 +16,7 @@ spec:
       annotations:
         message: 'Database errors are beyond capacity'
       expr: |
-        (sum(rate(connection_attempt_total{type="success",}[2m])) / sum(rate(connection_attempt_total[2m]))) < 99.9
+        vg_rental:db_connection_rate:5m < .99
       for: 2m
       labels:
         namespace: blockbuster
@@ -25,7 +25,7 @@ spec:
       annotations:
         message: 'Database errors are beyond capacity'
       expr: |
-        (sum(rate(connection_attempt_total{type="success",}[15m])) / sum(rate(connection_attempt_total[15m]))) < 99.9
+        vg_rental:db_connection_rate:30m < .99
       for: 15m
       labels:
         namespace: blockbuster
@@ -34,7 +34,7 @@ spec:
       annotations:
         message: 'Database errors are approaching capacity capacity'
       expr: |
-        (sum(rate(connection_attempt_total{type="success",}[2m])) / sum(rate(connection_attempt_total[2m]))) < 99.95
+        vg_rental:db_connection_rate:5m < .995
       for: 2m
       labels:
         namespace: blockbuster
@@ -43,7 +43,7 @@ spec:
       annotations:
         message: 'Database errors are approaching capacity capacity'
       expr: |
-        (sum(rate(connection_attempt_total{type="success",}[2m])) / sum(rate(connection_attempt_total[2m]))) < 99.95
+        vg_rental:db_connection_rate:30m < .995
       for: 15m
       labels:
         namespace: blockbuster
