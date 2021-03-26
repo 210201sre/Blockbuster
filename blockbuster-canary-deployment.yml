@@ -6,7 +6,8 @@ metadata:
   labels:
     app: vg-rental
 spec:
-  replicas: $CANARY_REPLICAS
+  replicas: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: vg-rental
@@ -23,7 +24,7 @@ spec:
           name: fluent-conf
       containers:
       - name: fluentd
-        image: grafana/fluent-plugin-loki:latest
+        image: eilonwy/grafana-fluent-loki:latest
         ports:
         - containerPort: 24224
         env:
@@ -35,7 +36,7 @@ spec:
           mountPath: /fluentd/etc/fluent.conf
           subPath: fluent.conf
       - name: vg-rental-canary
-        image: $DOCKER_IMAGE_NAME:$GIT_COMMIT
+        image: eilonwy/blockbuster:latest
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
