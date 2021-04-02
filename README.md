@@ -20,6 +20,9 @@ This is a backend web application for a service that allows customers to rent, r
 - AWS EKS
 - JUnit 5
 - Mockito
+- Jenkins
+- Prometheus
+- SonarCloud
 
 ## Features
 - Login/logout with administrator/customer privileges
